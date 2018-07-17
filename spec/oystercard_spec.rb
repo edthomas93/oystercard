@@ -24,4 +24,39 @@ describe Oystercard do
       expect { card.top_up 1 }.to raise_error "Maximum balance of £#{maximum_balance} exceeded"
     end
   end
+
+  describe '#deduct' do
+    it 'responds to deduct with one arg' do
+      expect(card).to respond_to(:deduct).with(1).argument
+    end
+
+    it 'can deduct from the balance' do
+      card.top_up 5
+      expect(card.deduct 2).to eq 3
+    end
+
+    it 'raises an error if not enough money on card' do
+      expect { card.deduct 1 }.to raise_error "Not enough money on card"
+    end
+  end
+
+  describe '#touch_in' do
+    it 'is in_journey' do
+      card.touch_in
+      expect(card.in_journey).to eq true
+    end
+  end
+
+  describe '#touch_out' do
+    it 'is no longer in_journey' do
+      card.touch_out
+      expect(card.in_journey).to eq false
+    end
+  end
+
+  describe '#in_journey?' do
+    it 'expects in_journey to be true or false' do
+      expect(card.in_journey).to eq(true).or eq(false)
+    end
+  end
 end
