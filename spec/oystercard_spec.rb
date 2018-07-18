@@ -31,19 +31,19 @@ describe Oystercard do
     end
 
     it 'can deduct from the balance' do
-      card.top_up 5
-      expect(card.deduct 2).to eq 3
-    end
-
-    it 'raises an error if not enough money on card' do
-      expect { card.deduct 1 }.to raise_error "Not enough money on card"
+      expect(card.deduct 2).to eq -2
     end
   end
 
   describe '#touch_in' do
-    it 'is in_journey' do
+    it 'successfully in_journey balance larger than minimum fare' do
+      card.top_up Oystercard::MINIMUM_CHARGE
       card.touch_in
       expect(card.in_journey).to eq true
+    end
+
+    it 'raises an error if touch in with less than minimum fare' do
+      expect { card.touch_in }.to raise_error "Minimum fare is £1, please top up your card"
     end
   end
 
@@ -51,6 +51,11 @@ describe Oystercard do
     it 'is no longer in_journey' do
       card.touch_out
       expect(card.in_journey).to eq false
+    end
+
+    it 'deducts fare from balance' do
+      card.touch_out
+      expect(card.balance).to eq -Oystercard::MINIMUM_CHARGE
     end
   end
 
